@@ -1,0 +1,16 @@
+{
+  "name": "catalanish",
+  "version": "0.1.0",
+  "description": "Traductor comercial castellà-català amb traducció simple i avançada (skill de revisió)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
