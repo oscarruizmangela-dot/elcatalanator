@@ -484,26 +484,20 @@ Segueix sempre aquest format exacte. Les explicacions dels errors (📌) i tots 
   }
 
   async function callClaude(systemPrompt, userText){
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
         system: systemPrompt,
-        messages: [{ role: 'user', content: userText }]
+        text: userText
       })
     });
-    if (!response.ok){
-      throw new Error('HTTP ' + response.status);
-    }
     const data = await response.json();
-    const text = (data.content || [])
-      .filter(block => block.type === 'text')
-      .map(block => block.text)
-      .join('\n');
-    if (!text) throw new Error('Resposta buida');
-    return text.trim();
+    if (!response.ok){
+      throw new Error(data.error || ('HTTP ' + response.status));
+    }
+    if (!data.text) throw new Error('Resposta buida');
+    return data.text.trim();
   }
 
   async function handleTranslate(mode){
