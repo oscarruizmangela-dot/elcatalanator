@@ -1,4 +1,4 @@
-# CATALANISH
+# El Catalanator by AIA
 
 Traductor comercial castellà → català amb dos modes:
 - **Traducció simple**: traducció directa.

@@ -14,6 +14,23 @@ const PORT = process.env.PORT || 3000;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
 
+// Preus oficials Anthropic en USD per milió de tokens (entrada / sortida).
+// Actualitza aquesta taula si canvies de model o si Anthropic revisa preus.
+const PRICING = {
+  'claude-haiku-4-5-20251001': { input: 1.00, output: 5.00 },
+  'claude-haiku-4-5': { input: 1.00, output: 5.00 },
+  'claude-sonnet-5': { input: 2.00, output: 10.00 }, // preu de llançament fins 31/08/2026
+  'claude-opus-4-8': { input: 5.00, output: 25.00 }
+};
+
+function calcCost(model, usage){
+  const rate = PRICING[model] || PRICING['claude-haiku-4-5-20251001'];
+  const inputTokens = (usage && usage.input_tokens) || 0;
+  const outputTokens = (usage && usage.output_tokens) || 0;
+  const cost = (inputTokens / 1e6) * rate.input + (outputTokens / 1e6) * rate.output;
+  return { cost, inputTokens, outputTokens };
+}
+
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -66,7 +83,14 @@ app.post('/api/translate', async (req, res) => {
       return res.status(502).json({ error: 'Resposta buida de l\'API.' });
     }
 
-    res.json({ text: outText });
+    const { cost, inputTokens, outputTokens } = calcCost(MODEL, data.usage);
+
+    res.json({
+      text: outText,
+      cost,
+      usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      model: MODEL
+    });
   } catch (err) {
     console.error('Error inesperado:', err);
     res.status(500).json({ error: 'Error intern del servidor.' });
