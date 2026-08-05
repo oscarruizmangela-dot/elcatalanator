@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CATALANISH — Traductor comercial castellà–català</title>
+<title>El Catalanator by AIA — Traductor comercial castellà–català</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -44,7 +44,22 @@
 
   /* Header */
   header{ margin-bottom: 28px; }
-  .wordmark-row{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    gap: 18px;
+    flex-wrap:wrap;
+  }
+  .brand-avatar{
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: var(--shadow);
+    background: var(--panel);
+  }
+  .wordmark-row{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
   .wordmark{
     font-family: var(--serif);
     font-weight:700;
@@ -54,10 +69,21 @@
     margin:0;
   }
   .wordmark span{ color: var(--red); }
+  .by-aia{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
   .tagline{
     font-size: 14px;
     color: var(--ink-soft);
-    margin: 2px 0 0;
+    margin: 4px 0 0;
   }
   .senyera-rule{
     margin-top: 12px;
@@ -109,7 +135,7 @@
     box-shadow: var(--shadow);
     display:flex;
     flex-direction:column;
-    min-height: 440px;
+    min-height: 580px;
     overflow:hidden;
   }
   textarea{
@@ -165,7 +191,7 @@
     overflow:hidden;
     display:flex;
     flex-direction:column;
-    min-height: 440px;
+    min-height: 580px;
   }
   .divider i{ flex:1; }
   .divider i:nth-child(odd){ background: var(--gold-soft); }
@@ -264,12 +290,74 @@
     color: var(--ink-faint);
   }
 
+  /* Cost bar */
+  .cost-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap: 10px 22px;
+    margin: 22px auto 0;
+    padding: 14px 20px;
+    max-width: 760px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  .cost-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 2px;
+  }
+  .cost-label{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .cost-value{
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight:500;
+    color: var(--ink);
+  }
+  .cost-item.editable .cost-value-input{
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    gap:2px;
+  }
+  .cost-item.editable input{
+    width: 62px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .cost-item.editable input:focus-visible{ outline: 2px solid var(--ink); outline-offset:1px; }
+  #resetCostBtn{ font-size: 11.5px; }
+  .cost-disclaimer{
+    max-width: 640px;
+    margin: 10px auto 0;
+    text-align:center;
+    font-size: 12px;
+    line-height:1.5;
+    color: var(--ink-faint);
+  }
+
   @media (max-width: 760px){
     .panels{ grid-template-columns: 1fr; }
     .divider{ display:none; }
     .lang-row{ grid-template-columns: 1fr; gap:4px; }
     .lang-arrow{ display:none; }
-    .panel{ min-height: 240px; }
+    .panel{ min-height: 320px; }
   }
 </style>
 </head>
@@ -277,9 +365,15 @@
 <div class="app">
 
   <header>
-    <div class="wordmark-row">
-      <h1 class="wordmark">CATALAN<span>ISH</span></h1>
-      <p class="tagline">Traductor de documents comercials · castellà → català</p>
+    <div class="brand-row">
+      <img src="/assets/anna-iglesias.png" alt="Anna Iglesias — AIA" class="brand-avatar">
+      <div>
+        <div class="wordmark-row">
+          <h1 class="wordmark">El Catala<span>nator</span></h1>
+          <span class="by-aia">by AIA</span>
+        </div>
+        <p class="tagline">Traductor de documents comercials · castellà → català</p>
+      </div>
     </div>
     <div class="senyera-rule" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   </header>
@@ -330,7 +424,30 @@
     </button>
   </div>
 
-  <footer>CATALANISH · v0 — eina interna de prova · les traduccions s'han de revisar abans d'enviar-se a client</footer>
+  <div class="cost-bar">
+    <div class="cost-item">
+      <span class="cost-label">Cost d'aquesta traducció</span>
+      <span class="cost-value" id="lastCost">—</span>
+    </div>
+    <div class="cost-item">
+      <span class="cost-label">Gastat en aquest navegador</span>
+      <span class="cost-value" id="totalSpent">$0,0000</span>
+    </div>
+    <div class="cost-item editable">
+      <span class="cost-label">Saldo inicial</span>
+      <span class="cost-value-input">
+        $<input type="number" id="startBalance" value="5.00" step="0.01" min="0">
+      </span>
+    </div>
+    <div class="cost-item">
+      <span class="cost-label">Saldo estimat restant</span>
+      <span class="cost-value" id="remainingBalance">$5,0000</span>
+    </div>
+    <button class="icon-btn" id="resetCostBtn" type="button">Reiniciar comptador</button>
+  </div>
+  <p class="cost-disclaimer">Estimació local calculada amb els tokens reals de cada resposta. No consulta el saldo real d'Anthropic (no exposen aquesta dada per API): introdueix aquí el saldo que hagis carregat a la consola per fer-ne un seguiment aproximat.</p>
+
+  <footer>El Catalanator by AIA · v0 — eina interna de prova · les traduccions s'han de revisar abans d'enviar-se a client</footer>
 </div>
 
 <script>
@@ -346,6 +463,63 @@
   const errorBanner = document.getElementById('errorBanner');
   const statusBadge = document.getElementById('statusBadge');
   let finalCorrectedText = '';
+
+  // --- Cost tracking ---
+  const lastCostEl = document.getElementById('lastCost');
+  const totalSpentEl = document.getElementById('totalSpent');
+  const remainingBalanceEl = document.getElementById('remainingBalance');
+  const startBalanceInput = document.getElementById('startBalance');
+  const resetCostBtn = document.getElementById('resetCostBtn');
+
+  const COST_STORAGE_KEY = 'catalanator_totalSpent';
+  const BALANCE_STORAGE_KEY = 'catalanator_startBalance';
+
+  function fmtUSD(value){
+    return '$' + value.toLocaleString('es-ES', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  }
+
+  function getTotalSpent(){
+    const stored = parseFloat(localStorage.getItem(COST_STORAGE_KEY));
+    return Number.isFinite(stored) ? stored : 0;
+  }
+  function setTotalSpent(value){
+    localStorage.setItem(COST_STORAGE_KEY, String(value));
+    renderCostBar();
+  }
+  function getStartBalance(){
+    const stored = parseFloat(localStorage.getItem(BALANCE_STORAGE_KEY));
+    return Number.isFinite(stored) ? stored : 5.00;
+  }
+  function setStartBalance(value){
+    localStorage.setItem(BALANCE_STORAGE_KEY, String(value));
+    renderCostBar();
+  }
+
+  function renderCostBar(){
+    const spent = getTotalSpent();
+    const start = getStartBalance();
+    totalSpentEl.textContent = fmtUSD(spent);
+    remainingBalanceEl.textContent = fmtUSD(Math.max(0, start - spent));
+    startBalanceInput.value = start.toFixed(2);
+  }
+
+  function addCost(amount){
+    const updated = getTotalSpent() + amount;
+    setTotalSpent(updated);
+  }
+
+  startBalanceInput.addEventListener('change', () => {
+    const value = parseFloat(startBalanceInput.value);
+    setStartBalance(Number.isFinite(value) && value >= 0 ? value : 5.00);
+  });
+
+  resetCostBtn.addEventListener('click', () => {
+    if (confirm('Vols reiniciar el comptador de despesa d\'aquest navegador a 0?')){
+      setTotalSpent(0);
+    }
+  });
+
+  renderCostBar();
 
   function countLabel(text){
     const chars = text.length;
@@ -497,7 +671,7 @@ Segueix sempre aquest format exacte. Les explicacions dels errors (📌) i tots 
       throw new Error(data.error || ('HTTP ' + response.status));
     }
     if (!data.text) throw new Error('Resposta buida');
-    return data.text.trim();
+    return { text: data.text.trim(), cost: typeof data.cost === 'number' ? data.cost : 0 };
   }
 
   async function handleTranslate(mode){
@@ -510,14 +684,17 @@ Segueix sempre aquest format exacte. Les explicacions dels errors (📌) i tots 
     statusBadge.style.display = 'none';
     copyFinalBtn.style.display = 'none';
     finalCorrectedText = '';
+    lastCostEl.textContent = '…';
     setLoading(true, mode);
     try {
       if (mode === 'simple'){
         const result = await callClaude(SIMPLE_SYSTEM, text);
-        targetText.value = result;
-        finalCorrectedText = result;
+        targetText.value = result.text;
+        finalCorrectedText = result.text;
         statusBadge.textContent = 'Traducció simple';
         statusBadge.style.display = 'inline-block';
+        lastCostEl.textContent = fmtUSD(result.cost);
+        addCost(result.cost);
       } else {
         // Pas 1: traducció comercial (terminologia, registre, format)
         statusBadge.textContent = 'Pas 1/2 · Traduint';
@@ -527,16 +704,21 @@ Segueix sempre aquest format exacte. Les explicacions dels errors (📌) i tots 
         // Pas 2: revisió amb la skill de correcció catalana
         statusBadge.textContent = 'Pas 2/2 · Revisant amb la skill';
         targetText.placeholder = 'Revisant amb la skill de correcció catalana...';
-        const report = await callClaude(REVIEWER_SYSTEM, draft);
-        targetText.value = report;
+        const report = await callClaude(REVIEWER_SYSTEM, draft.text);
+        targetText.value = report.text;
 
-        const extracted = extractFinalVersion(report);
-        finalCorrectedText = extracted || draft;
+        const extracted = extractFinalVersion(report.text);
+        finalCorrectedText = extracted || draft.text;
         copyFinalBtn.style.display = 'inline-flex';
         statusBadge.textContent = 'Traducció avançada · skill';
+
+        const stepCost = draft.cost + report.cost;
+        lastCostEl.textContent = fmtUSD(stepCost);
+        addCost(stepCost);
       }
       updateTargetCount();
     } catch (err){
+      lastCostEl.textContent = '—';
       showError('No s\'ha pogut completar la traducció. Torna-ho a provar en uns segons.');
     } finally {
       setLoading(false, mode);
