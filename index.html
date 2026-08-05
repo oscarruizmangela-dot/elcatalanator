@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CATALANISH — Traductor comercial castellà–català</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF0EA;
+    --panel:#FFFFFF;
+    --ink:#1B2A4A;
+    --ink-soft:#5B6478;
+    --ink-faint:#9AA1B0;
+    --gold:#E3B23C;
+    --gold-soft:#F4E2B0;
+    --red:#C13B4E;
+    --red-soft:#F0C7CD;
+    --border:#DEDCD3;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(27,42,74,0.05), 0 8px 24px rgba(27,42,74,0.06);
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'Public Sans', system-ui, sans-serif;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 100% 0%, rgba(227,178,60,0.10), transparent 45%),
+      radial-gradient(circle at 0% 100%, rgba(193,59,78,0.06), transparent 40%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    padding: 32px 20px 48px;
+  }
+  .app{ width:100%; max-width: 1180px; }
+
+  /* Header */
+  header{ margin-bottom: 28px; }
+  .wordmark-row{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .wordmark{
+    font-family: var(--serif);
+    font-weight:700;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin:0;
+  }
+  .wordmark span{ color: var(--red); }
+  .tagline{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 2px 0 0;
+  }
+  .senyera-rule{
+    margin-top: 12px;
+    height: 4px;
+    width: 220px;
+    max-width: 60%;
+    border-radius: 4px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .senyera-rule i{ flex:1; }
+  .senyera-rule i:nth-child(odd){ background: var(--gold); }
+  .senyera-rule i:nth-child(even){ background: var(--red); }
+
+  /* Toolbar labels */
+  .lang-row{
+    display:grid;
+    grid-template-columns: 1fr 28px 1fr;
+    gap: 18px;
+    align-items:center;
+    margin-bottom: 10px;
+  }
+  .lang-label{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .lang-label .dot{ width:7px; height:7px; border-radius:50%; background: var(--ink-faint); }
+  .lang-label.target .dot{ background: var(--red); }
+  .lang-arrow{ text-align:center; color: var(--ink-faint); font-size:14px; }
+
+  /* Panels */
+  .panels{
+    display:grid;
+    grid-template-columns: 1fr 10px 1fr;
+    gap: 18px;
+    align-items:stretch;
+  }
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    min-height: 440px;
+    overflow:hidden;
+  }
+  textarea{
+    flex:1;
+    border:none;
+    outline:none;
+    resize:none;
+    padding: 18px 20px;
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height:1.6;
+    color: var(--ink);
+    background:transparent;
+  }
+  textarea::placeholder{ color: var(--ink-faint); }
+  textarea[readonly]{ color:#28324a; }
+  .panel-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 8px 14px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+  .panel-foot .actions{ display:flex; gap:4px; }
+  .icon-btn{
+    border:none;
+    background:transparent;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 5px 9px;
+    border-radius: 7px;
+    cursor:pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .icon-btn:hover{ background: var(--bg); color: var(--ink); }
+  .icon-btn.final{
+    color: #8A6200;
+    background: var(--gold-soft);
+    font-weight:600;
+  }
+  .icon-btn.final:hover{ background: var(--gold); }
+  .icon-btn:focus-visible, button:focus-visible, textarea:focus-visible{
+    outline: 2px solid var(--ink); outline-offset: 2px;
+  }
+
+  /* Senyera divider between panels */
+  .divider{
+    border-radius: 6px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    min-height: 440px;
+  }
+  .divider i{ flex:1; }
+  .divider i:nth-child(odd){ background: var(--gold-soft); }
+  .divider i:nth-child(even){ background: var(--red-soft); }
+
+  /* Status badge over target panel */
+  .status-badge{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--ink-soft);
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+  }
+
+  /* Action bar */
+  .action-bar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 14px;
+    margin: 26px 0 8px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    font-family: var(--sans);
+    font-weight:600;
+    font-size: 14.5px;
+    padding: 13px 22px;
+    border-radius: 10px;
+    cursor:pointer;
+    border: 1.5px solid var(--ink);
+    transition: transform .12s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+  }
+  .btn:active{ transform: translateY(1px); }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+  .btn-simple{
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .btn-simple:hover:not(:disabled){ background: var(--bg); }
+  .btn-advanced{
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    box-shadow: 0 6px 18px rgba(27,42,74,0.22);
+  }
+  .btn-advanced:hover:not(:disabled){ background:#141f38; }
+  .btn-advanced .chip{
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing:.05em;
+    background: var(--gold);
+    color: #302200;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .spinner{
+    width:14px; height:14px;
+    border-radius:50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff;
+    animation: spin .7s linear infinite;
+  }
+  .btn-simple .spinner{ border-color: rgba(27,42,74,0.2); border-top-color: var(--ink); }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){
+    .spinner{ animation: none; }
+  }
+
+  /* Error banner */
+  .error-banner{
+    display:none;
+    max-width: 640px;
+    margin: 0 auto 14px;
+    background: #FBEAEC;
+    border: 1px solid var(--red-soft);
+    color: #7A1F2B;
+    font-size: 13.5px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-align:center;
+  }
+  .error-banner.show{ display:block; }
+
+  footer{
+    text-align:center;
+    margin-top: 30px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 760px){
+    .panels{ grid-template-columns: 1fr; }
+    .divider{ display:none; }
+    .lang-row{ grid-template-columns: 1fr; gap:4px; }
+    .lang-arrow{ display:none; }
+    .panel{ min-height: 240px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="wordmark-row">
+      <h1 class="wordmark">CATALAN<span>ISH</span></h1>
+      <p class="tagline">Traductor de documents comercials · castellà → català</p>
+    </div>
+    <div class="senyera-rule" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </header>
+
+  <div class="lang-row">
+    <div class="lang-label source"><span class="dot"></span> Castellà · origen</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-label target"><span class="dot"></span> Català · traducció</div>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <textarea id="sourceText" placeholder="Enganxa aquí el text en castellà (catàleg, fitxa de producte, comunicació a client...)"></textarea>
+      <div class="panel-foot">
+        <span id="sourceCount">0 caràcters</span>
+        <div class="actions">
+          <button class="icon-btn" id="clearBtn" type="button">Esborrar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+    <div class="panel">
+      <textarea id="targetText" placeholder="La traducció al català apareixerà aquí." readonly></textarea>
+      <div class="panel-foot">
+        <span id="targetCount">0 caràcters</span>
+        <div class="actions">
+          <span class="status-badge" id="statusBadge" style="display:none;"></span>
+          <button class="icon-btn final" id="copyFinalBtn" type="button" style="display:none;">Copiar versió final</button>
+          <button class="icon-btn" id="copyBtn" type="button">Copiar tot</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="action-bar">
+    <button class="btn btn-simple" id="simpleBtn" type="button">
+      <span class="btn-icon-slot"></span>
+      Traducció simple
+    </button>
+    <button class="btn btn-advanced" id="advancedBtn" type="button">
+      <span class="btn-icon-slot"></span>
+      Traducció avançada
+      <span class="chip">SKILL</span>
+    </button>
+  </div>
+
+  <footer>CATALANISH · v0 — eina interna de prova · les traduccions s'han de revisar abans d'enviar-se a client</footer>
+</div>
+
+<script>
+  const sourceText = document.getElementById('sourceText');
+  const targetText = document.getElementById('targetText');
+  const sourceCount = document.getElementById('sourceCount');
+  const targetCount = document.getElementById('targetCount');
+  const simpleBtn = document.getElementById('simpleBtn');
+  const advancedBtn = document.getElementById('advancedBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const copyFinalBtn = document.getElementById('copyFinalBtn');
+  const errorBanner = document.getElementById('errorBanner');
+  const statusBadge = document.getElementById('statusBadge');
+  let finalCorrectedText = '';
+
+  function countLabel(text){
+    const chars = text.length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    return chars + ' caràcters · ' + words + ' paraules';
+  }
+  function updateSourceCount(){ sourceCount.textContent = countLabel(sourceText.value); }
+  function updateTargetCount(){ targetCount.textContent = countLabel(targetText.value); }
+  sourceText.addEventListener('input', updateSourceCount);
+  updateSourceCount();
+  updateTargetCount();
+
+  function showError(msg){
+    errorBanner.textContent = msg;
+    errorBanner.classList.add('show');
+  }
+  function hideError(){
+    errorBanner.classList.remove('show');
+    errorBanner.textContent = '';
+  }
+
+  function setLoading(isLoading, mode){
+    simpleBtn.disabled = isLoading;
+    advancedBtn.disabled = isLoading;
+    const targetBtn = mode === 'simple' ? simpleBtn : advancedBtn;
+    const iconSlot = targetBtn.querySelector('.btn-icon-slot');
+    if (isLoading){
+      iconSlot.innerHTML = '<span class="spinner" aria-hidden="true"></span>';
+      targetText.value = '';
+      targetText.placeholder = 'Traduint...';
+      copyFinalBtn.style.display = 'none';
+      updateTargetCount();
+    } else {
+      iconSlot.innerHTML = '';
+      targetText.placeholder = 'La traducció al català apareixerà aquí.';
+    }
+  }
+
+  const SIMPLE_SYSTEM = `Ets un traductor automàtic de castellà a català. `
+    + `Tradueix fidelment el text que et donin, sense afegir explicacions, notes, comentaris ni cap text addicional. `
+    + `Conserva el format original: salts de línia, llistes, numeració, majúscules de títols i puntuació estructural. `
+    + `Retorna únicament el text traduït.`;
+
+  const ADVANCED_SYSTEM = `Ets un traductor professional expert en traducció comercial de castellà a català, `
+    + `especialitzat en documents d'empresa: catàlegs de producte, fitxes tècniques, comunicacions a client, `
+    + `condicions de venda i correspondència comercial.
+
+Segueix sempre aquestes normes:
+1. Utilitza el català estàndard central, amb un registre formal i professional adequat a un context comercial (tractament de "vostè" quan calgui, mai excessivament col·loquial).
+2. Fes servir la terminologia comercial i tècnica correcta i habitual en documents catalans reals (per exemple: "IVA inclòs", "termini de lliurament", "atenció al client", "referència", "existències", "despeses d'enviament"), evitant calcs literals del castellà.
+3. Vigila especialment els falsos amics i els errors típics de traducció castellà-català (p. ex. "embalatge" i no "empaquetatge" quan correspongui, "tanmateix" en lloc de calcs incorrectes, etc.), triant sempre la forma normativa correcta.
+4. Conserva estrictament el format original: salts de línia, llistes amb pics o numeració, taules en text, majúscules de títols, símbols de moneda i unitats.
+5. No tradueixis noms de marca, noms propis d'empresa ni referències de producte (SKU, codis) tret que el context indiqui clarament que s'han d'adaptar.
+6. Adapta les expressions idiomàtiques i les frases fetes a un equivalent natural en català, no una traducció literal.
+7. Mantén el to i la intenció del text original (informatiu, persuasiu, formal, etc.).
+8. Revisa la coherència terminològica: si un terme apareix diverses vegades, tradueix-lo sempre de la mateixa manera dins del mateix document.
+9. No afegeixis cap explicació, nota, comentari, ni cap text que no formi part de la traducció. Retorna únicament el text traduït en català, llest per publicar-se o enviar-se a un client.`;
+
+  const REVIEWER_SYSTEM = `Ets un corrector expert en llengua catalana especialitzat en revisar textos traduïts del castellà al català amb Google Translate. El teu objectiu és detectar i corregir TOTS els errors que produeix la traducció automàtica, transformant el text en català correcte, natural i fluid.
+
+Context de treball
+L'equip de màrqueting redacta butlletins (newsletters de Mailchimp) en castellà. Un altre departament els tradueix al català usant Google Translate. El resultat sovint conté barbarismes, errors ortotipogràfics i calcs gramaticals que tu has de detectar i corregir.
+
+Àrees de revisió
+Revisa el text en quatre àrees, per ordre de gravetat.
+
+1. Barbarismes (castellanismes) — Prioritat alta
+Són el problema més freqüent en traduccions automàtiques del castellà. Busca:
+- Lèxics: paraules castellanes no adaptades o mal adaptades (desde, hasta, entonces, incluso, apenas, sin, pues, ya, bueno, además, luego, tampoco, mientras...).
+- Locucions: calcs de locucions castellanes. Google Translate sovint tradueix literalment expressions com "sin embargo", "al igual que", "en cuanto a", "debido a", "a pesar de", "por lo tanto".
+- Col·loquialismes: formes col·loquials castellanes que s'infiltren en el text.
+
+2. Ortotipografia catalana — Prioritat alta
+El català té convencions tipogràfiques pròpies que Google Translate ignora sistemàticament:
+- Cometes: sempre llatines «» (mai angleses "" ni rectes "").
+- Signes d'interrogació/exclamació: sense obertura ¿¡ (el català no els usa).
+- Accents: verifica oberts (è, ò) vs tancats (é, ó) segons normativa. Errors típics: què (no qué), això (no aixó), però (no peró).
+- Punt volat (ela geminada): l·l és correcte (no l.l, ni ll quan cal l·l). Exemples: col·laborar, il·lustrar, intel·ligent.
+- Guions: guionet (-) per compostos, guió llarg (—) per incisos.
+- Xifres: punt volat per milers (1·000), coma decimal (3,50 €).
+- Dates: mesos en minúscula, format dd de mes de aaaa.
+- Sigles: sense punts (UE, no U.E.).
+
+3. Gramàtica — Prioritat mitjana-alta
+Google Translate falla sovint en gramàtica catalana:
+- Pronoms febles: posició i grafia correcta (combinacions, apostrofació).
+- Preposicions: a/en, per/per a, amb (no "con"), des de (no "desde").
+- Concordança: gènere i nombre (especialment amb paraules que canvien de gènere entre castellà i català).
+- Verbs: perífrasis correctes, ús adequat del subjuntiu, formes verbals catalanes genuïnes.
+- Articles: ús de l', el/la, els/les (mai "lo/los" en català normatiu).
+
+4. Estil i registre — Prioritat mitjana
+Un text pot ser gramaticalment correcte però sonar a traducció automàtica:
+- Naturalitat: el text ha de sonar com si s'hagués escrit originalment en català.
+- Adequació al públic: registre apropiat per al butlletí.
+- Coherència terminològica: mateixos termes al llarg del text.
+- Claredat i concisió: eliminar redundàncies i circumloquis de la traducció.
+
+Format de resposta
+Segueix sempre aquest format exacte. Les explicacions dels errors (📌) i tots els comentaris generals s'han de redactar en castellà. Només la versió corregida final ha de ser en català.
+
+## 🔍 Errors trobats
+### ⚠️ Barbarismes
+❌ «[fragment original]» → ✅ «[correcció]»
+📌 [explicació en castellà]
+(repetir per cada error; si no n'hi ha: ✓ Cap error detectat.)
+### ✏️ Ortotipografia
+❌ «[fragment original]» → ✅ «[correcció]»
+📌 [explicació en castellà]
+### 📐 Gramàtica
+❌ «[fragment original]» → ✅ «[correcció]»
+📌 [explicació en castellà]
+### 🎨 Estil i registre
+❌ «[fragment original]» → ✅ «[correcció]»
+📌 [explicació en castellà]
+
+## 📊 Resum
+- Barbarismes: X
+- Ortotipografia: X
+- Gramàtica: X
+- Estil: X
+- Gravetat general: [🟢 Lleu / 🟡 Moderat / 🔴 Greu]
+
+## ✨ Versió corregida
+[Text complet corregit en català, llest per copiar al Mailchimp]`;
+
+  function extractFinalVersion(report){
+    const markers = ['## ✨ Versió corregida', '✨ Versió corregida', 'Versió corregida'];
+    for (const marker of markers){
+      const idx = report.indexOf(marker);
+      if (idx !== -1){
+        return report.slice(idx + marker.length).trim();
+      }
+    }
+    return null;
+  }
+
+  async function callClaude(systemPrompt, userText){
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userText }]
+      })
+    });
+    if (!response.ok){
+      throw new Error('HTTP ' + response.status);
+    }
+    const data = await response.json();
+    const text = (data.content || [])
+      .filter(block => block.type === 'text')
+      .map(block => block.text)
+      .join('\n');
+    if (!text) throw new Error('Resposta buida');
+    return text.trim();
+  }
+
+  async function handleTranslate(mode){
+    const text = sourceText.value.trim();
+    if (!text){
+      showError('Escriu o enganxa un text en castellà abans de traduir.');
+      return;
+    }
+    hideError();
+    statusBadge.style.display = 'none';
+    copyFinalBtn.style.display = 'none';
+    finalCorrectedText = '';
+    setLoading(true, mode);
+    try {
+      if (mode === 'simple'){
+        const result = await callClaude(SIMPLE_SYSTEM, text);
+        targetText.value = result;
+        finalCorrectedText = result;
+        statusBadge.textContent = 'Traducció simple';
+        statusBadge.style.display = 'inline-block';
+      } else {
+        // Pas 1: traducció comercial (terminologia, registre, format)
+        statusBadge.textContent = 'Pas 1/2 · Traduint';
+        statusBadge.style.display = 'inline-block';
+        const draft = await callClaude(ADVANCED_SYSTEM, text);
+
+        // Pas 2: revisió amb la skill de correcció catalana
+        statusBadge.textContent = 'Pas 2/2 · Revisant amb la skill';
+        targetText.placeholder = 'Revisant amb la skill de correcció catalana...';
+        const report = await callClaude(REVIEWER_SYSTEM, draft);
+        targetText.value = report;
+
+        const extracted = extractFinalVersion(report);
+        finalCorrectedText = extracted || draft;
+        copyFinalBtn.style.display = 'inline-flex';
+        statusBadge.textContent = 'Traducció avançada · skill';
+      }
+      updateTargetCount();
+    } catch (err){
+      showError('No s\'ha pogut completar la traducció. Torna-ho a provar en uns segons.');
+    } finally {
+      setLoading(false, mode);
+    }
+  }
+
+  simpleBtn.addEventListener('click', () => handleTranslate('simple'));
+  advancedBtn.addEventListener('click', () => handleTranslate('advanced'));
+
+  clearBtn.addEventListener('click', () => {
+    sourceText.value = '';
+    targetText.value = '';
+    updateSourceCount();
+    updateTargetCount();
+    hideError();
+    statusBadge.style.display = 'none';
+    copyFinalBtn.style.display = 'none';
+    finalCorrectedText = '';
+    sourceText.focus();
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    if (!targetText.value) return;
+    try {
+      await navigator.clipboard.writeText(targetText.value);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = 'Copiat!';
+      setTimeout(() => { copyBtn.textContent = original; }, 1500);
+    } catch (err){
+      showError('No s\'ha pogut copiar al porta-retalls.');
+    }
+  });
+
+  copyFinalBtn.addEventListener('click', async () => {
+    if (!finalCorrectedText) return;
+    try {
+      await navigator.clipboard.writeText(finalCorrectedText);
+      const original = copyFinalBtn.textContent;
+      copyFinalBtn.textContent = 'Copiat!';
+      setTimeout(() => { copyFinalBtn.textContent = original; }, 1500);
+    } catch (err){
+      showError('No s\'ha pogut copiar al porta-retalls.');
+    }
+  });
+</script>
+</body>
+</html>
